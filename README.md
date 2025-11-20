@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="banner-artemis-tutuco.svg" alt="Banner do jogo Ártemis e Tutuco no Centro da Terra"/>
+  <img src="banner-artemis-tutuco.svg" alt="Banner do jogo Ártemis e Tutuco no Centro da Terra" />
 </p>
 
 <p align="center">
