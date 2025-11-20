@@ -6,7 +6,7 @@
 ### *Um minigame infantil em HTML, CSS e JavaScript usando emojis como gráficos*
 
 Este projeto é um jogo feito para a pequena **Ártemis**, que adora aventuras, cores e histórias encantadas.  
-A proposta foi transformar tudo isso em código — um minigame simples, divertido e totalmente feito com **emojis**, sem qualquer imagem externa.
+A proposta foi transformar tudo isso em código, um minigame simples, divertido e totalmente feito com **emojis**, sem qualquer imagem externa.
 
 O resultado é uma descida mágica pelo interior da Terra, onde Ártemis encontra seu amigo **Tutuco**, a topeira, enquanto desvia de obstáculos e coleta pedras preciosas.  
 Um jogo perfeito para crianças, para aprendizado em sala de aula (JavaScript) e também como projeto pessoal.
