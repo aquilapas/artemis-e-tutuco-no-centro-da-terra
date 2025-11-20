@@ -1,13 +1,9 @@
-<p align="center">
-  <img src="https://raw.githubusercontent.com/aquilapas/artemis-e-tutuco-no-centro-da-terra/main/banner-artemis-tutuco.svg" width="100%" />
-</p>
+# 🎮 Ártemis e Tutuco no Centro da Terra
+### *Um minigame infantil em HTML, CSS e JavaScript usando emojis como gráficos*
 
 <p align="center">
   <img src="A_2D_digital_illustration_features_a_young_girl_an.png" width="220" />
 </p>
-
-# 🎮 Ártemis e Tutuco no Centro da Terra
-### *Um minigame infantil em HTML, CSS e JavaScript usando emojis como gráficos*
 
 Este projeto é um jogo feito para a pequena **Ártemis**, que adora aventuras, cores e histórias encantadas.  
 A proposta foi transformar tudo isso em código, um minigame simples, divertido e totalmente feito com **emojis**, sem qualquer imagem externa.
