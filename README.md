@@ -2,6 +2,10 @@
   <img src="banner-artemis-tutuco.svg" alt="Banner do jogo Ártemis e Tutuco no Centro da Terra"/>
 </p>
 
+<p align="center">
+  <img src="A_2D_digital_illustration_features_a_young_girl_an.png" width="220" />
+</p>
+
 # 🎮 Ártemis e Tutuco no Centro da Terra
 ### *Um minigame infantil em HTML, CSS e JavaScript usando emojis como gráficos*
 
@@ -162,7 +166,7 @@ Professores podem pedir aos alunos:
 
 Este jogo foi criado para **Ártemis, 3 anos**, que ama aventuras, túneis, brilho e o amigo Tutuco.
 
-> *"Aqui é onde nascem os sonhos corajosos." — Tutuco, no coração da Terra*
+> *"Aqui é onde nascem os sonhos corajosos." ~Tutuco, no coração da Terra*
 
 ---
 
