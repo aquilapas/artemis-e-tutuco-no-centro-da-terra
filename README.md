@@ -102,3 +102,74 @@ Isso deixa o código leve, acessível e fácil de modificar em aulas de programa
 
 ## 📂 Estrutura de Arquivos
 
+/
+├── artemis_tutuco_centro_da_terra.html # Arquivo principal do jogo
+├── banner-artemis-tutuco.svg # Banner animado exibido no README
+├── musica_fundo.mp3 # (Opcional) Música ambiente
+└── README.md # Documentação
+
+
+---
+
+## ▶️ Como Executar
+
+Você tem duas opções:
+
+### 🟣 1. Abrir localmente
+1. Baixe ou clone o repositório  
+2. Abra o arquivo  
+
+artemis_tutuco_centro_da_terra.html
+
+em qualquer navegador moderno.
+
+---
+
+### 🟢 2. Usar GitHub Pages  
+1. Vá em **Settings → Pages**  
+2. Configure:  
+- Source: `main`  
+- Folder: `/root`  
+3. Salve  
+4. Use o link gerado pelo GitHub para jogar online.
+
+---
+
+## 🧑‍🏫 Uso em Sala de Aula
+
+Este projeto funciona muito bem para ensino de:
+
+- Animações com JavaScript  
+- Eventos do teclado  
+- Manipulação de DOM  
+- Lógica de colisão  
+- Game loop com `requestAnimationFrame`  
+- Funções e Arrays  
+- HTML + CSS aplicados a jogos simples  
+- Criatividade com emojis como sprites  
+
+Professores podem pedir aos alunos:
+
+- Criar novos obstáculos  
+- Inventar novos capítulos  
+- Criar personagens adicionais  
+- Alterar dificuldades  
+- Criar novos cenários  
+
+---
+
+## ❤️ Dedicação
+
+Este jogo foi criado para **Ártemis, 3 anos**, que ama aventuras, túneis, brilho e o amigo Tutuco.
+
+> *"Aqui é onde nascem os sonhos corajosos." — Tutuco, no coração da Terra*
+
+---
+
+## 📄 Licença
+
+Este projeto é livre para uso **educacional, infantil e pessoal**.  
+Modifique à vontade — só mantenha os créditos da autora original.
+
+
+
