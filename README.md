@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="./banner-artemis-tutuco.svg" width="100%" />
+  <img src="https://raw.githubusercontent.com/aquilapas/artemis-e-tutuco-no-centro-da-terra/main/banner-artemis-tutuco.svg" width="100%" />
 </p>
 
 <p align="center">
