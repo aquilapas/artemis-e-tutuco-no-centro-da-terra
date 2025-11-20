@@ -1,0 +1,731 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8">
+  <title>Ártemis no Centro da Terra</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      background: #2b1430;
+      font-family: system-ui, Arial;
+      color: #ffe9ff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    #game-container {
+      position: relative;
+      width: 360px;
+      height: 640px;
+      border: 3px solid #ffb3f3;
+      border-radius: 16px;
+      overflow: hidden;
+      background: linear-gradient(#4a1f30, #70354a, #3b1524);
+    }
+
+    #background {
+      position: absolute;
+      inset: 0;
+      background-image: repeating-linear-gradient(
+        to bottom,
+        rgba(0, 0, 0, 0.2) 0,
+        rgba(0, 0, 0, 0.2) 8px,
+        transparent 8px,
+        transparent 24px
+      );
+      animation: scroll-bg 1.2s linear infinite;
+      z-index: 0;
+    }
+    @keyframes scroll-bg {
+      from { transform: translateY(0); }
+      to   { transform: translateY(-32px); }
+    }
+
+    #hud {
+      position: absolute;
+      top: 6px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 95%;
+      display: flex;
+      justify-content: space-between;
+      font-size: 14px;
+      z-index: 5;
+    }
+    #score, #depth {
+      background: rgba(0, 0, 0, 0.4);
+      padding: 4px 8px;
+      border-radius: 999px;
+    }
+
+    #message {
+      position: absolute;
+      top: 40px;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 6px 10px;
+      border-radius: 12px;
+      background: rgba(0, 0, 0, 0.55);
+      font-size: 13px;
+      text-align: center;
+      z-index: 5;
+    }
+
+    #player {
+      position: absolute;
+      width: 40px;
+      height: 40px;
+      text-align: center;
+      font-size: 28px;
+      line-height: 40px;
+      z-index: 3;
+    }
+
+    #tutuco {
+      position: absolute;
+      width: 40px;
+      height: 40px;
+      text-align: center;
+      font-size: 30px;
+      line-height: 40px;
+      bottom: 10px;
+      right: 10px;
+      z-index: 3;
+      display: none;
+    }
+
+    .obstacle, .gem {
+      position: absolute;
+      width: 32px;
+      height: 32px;
+      font-size: 26px;
+      text-align: center;
+      line-height: 32px;
+      z-index: 2;
+    }
+
+    #start-screen {
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.85);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 16px;
+      z-index: 10;
+    }
+    #start-screen h1 {
+      font-size: 22px;
+      margin-bottom: 10px;
+    }
+    #start-screen p {
+      font-size: 14px;
+      margin-bottom: 8px;
+    }
+
+    #difficulty-box {
+      margin-top: 8px;
+      margin-bottom: 6px;
+    }
+    .diff-btn {
+      margin: 3px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      border: 1px solid #ffb3f3;
+      background: rgba(0, 0, 0, 0.4);
+      color: #ffe9ff;
+      font-size: 12px;
+      cursor: pointer;
+    }
+    .diff-btn.active {
+      background: #ff72d1;
+      color: #2b1430;
+      font-weight: bold;
+      box-shadow: 0 0 8px rgba(255, 114, 209, 0.7);
+    }
+
+    #start-btn {
+      margin-top: 10px;
+      padding: 8px 18px;
+      border-radius: 999px;
+      border: none;
+      font-size: 14px;
+      cursor: pointer;
+      background: #ff72d1;
+      color: #2b1430;
+      font-weight: bold;
+      box-shadow: 0 0 8px rgba(255, 114, 209, 0.6);
+    }
+
+    #mobile-controls {
+      position: absolute;
+      bottom: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 20px;
+      z-index: 6;
+    }
+    .control-btn {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      border: 2px solid #ffd0ff;
+      background: rgba(0, 0, 0, 0.4);
+      font-size: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      user-select: none;
+      touch-action: none;
+    }
+
+    /* Painel de história (capítulos) */
+    #story-panel {
+      position: absolute;
+      bottom: 90px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 88%;
+      max-width: 310px;
+      padding: 10px 12px;
+      background: rgba(32, 8, 28, 0.94);
+      border-radius: 14px;
+      border: 1px solid #ffb3f3;
+      box-shadow: 0 0 10px rgba(255, 179, 243, 0.7);
+      font-size: 13px;
+      line-height: 1.3;
+      z-index: 8;
+      display: none;
+      animation: story-pop 0.25s ease-out;
+    }
+    #story-title {
+      font-weight: bold;
+      margin-bottom: 4px;
+      font-size: 14px;
+      color: #ffd6ff;
+    }
+    #story-text {
+      font-size: 13px;
+    }
+    @keyframes story-pop {
+      from { transform: translateX(-50%) translateY(10px); opacity: 0; }
+      to   { transform: translateX(-50%) translateY(0); opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+
+<div id="game-container">
+  <div id="background"></div>
+
+  <div id="hud">
+    <div id="score">⭐ Pontos: 0</div>
+    <div id="depth">🌍 Profundidade: 0 m</div>
+  </div>
+
+  <div id="message">
+    Desça com a Ártemis 👧, desvie das pedras 🪨 e pegue as joias 💎!
+  </div>
+
+  <div id="player">👧</div>
+  <div id="tutuco">🦫</div>
+
+  <!-- Controles para celular -->
+  <div id="mobile-controls">
+    <div class="control-btn" id="btn-left">◀️</div>
+    <div class="control-btn" id="btn-right">▶️</div>
+  </div>
+
+  <!-- Painel de história -->
+  <div id="story-panel">
+    <div id="story-title">Capítulo</div>
+    <div id="story-text"></div>
+  </div>
+
+  <!-- Tela de início / reinício -->
+  <div id="start-screen">
+    <h1>Ártemis no Centro da Terra</h1>
+    <p>👧 A Ártemis desce pelos túneis para encontrar seu amigo Tutuco, a topeira 🦫.</p>
+    <p>Desvie das pedras 🪨 e pegue as pedras preciosas 💎 para ganhar pontos!</p>
+
+    <div id="difficulty-box">
+      <p style="margin-bottom:4px;">Escolha a dificuldade:</p>
+      <button class="diff-btn" data-diff="bebe">🍼 Modo Bebê</button>
+      <button class="diff-btn active" data-diff="normal">😀 Normal</button>
+      <button class="diff-btn" data-diff="dificil">🔥 Aventureira</button>
+      <button class="diff-btn" data-diff="pro">💀 Tutuco Pro</button>
+    </div>
+
+    <p style="margin-top:4px;">Use as setas ← → ou os botões na tela.</p>
+    <button id="start-btn">Começar a Descer! ⛏️</button>
+    <p style="font-size:11px;margin-top:6px;opacity:0.7;">
+      (Se quiser música, coloque um arquivo <b>musica_fundo.mp3</b> na mesma pasta.)
+    </p>
+  </div>
+
+  <!-- MÚSICA DE FUNDO OPCIONAL (coloque musica_fundo.mp3 na mesma pasta) -->
+  <audio id="bg-music" src="musica_fundo.mp3" loop></audio>
+</div>
+
+<script>
+  const gameContainer = document.getElementById("game-container");
+  const player = document.getElementById("player");
+  const tutuco = document.getElementById("tutuco");
+  const scoreEl = document.getElementById("score");
+  const depthEl = document.getElementById("depth");
+  const messageEl = document.getElementById("message");
+  const startScreen = document.getElementById("start-screen");
+  const startBtn = document.getElementById("start-btn");
+  const btnLeft = document.getElementById("btn-left");
+  const btnRight = document.getElementById("btn-right");
+  const diffButtons = document.querySelectorAll(".diff-btn");
+  const storyPanel = document.getElementById("story-panel");
+  const storyTitleEl = document.getElementById("story-title");
+  const storyTextEl = document.getElementById("story-text");
+  const bgMusic = document.getElementById("bg-music");
+
+  const gameWidth = 360;
+  const gameHeight = 640;
+
+  let playerX = gameWidth / 2 - 20;
+  let playerY = gameHeight / 2;
+  let playerSpeed = 4;
+
+  let keys = { left: false, right: false };
+  let touchDirection = 0;
+
+  let obstacles = [];
+  let gems = [];
+  let lastSpawnTime = 0;
+  let spawnInterval = 650;
+
+  let score = 0;
+  let depth = 0;
+  let gameRunning = false;
+  let lastFrameTime = 0;
+  let rafId = null;
+  let tutucoShown = false;
+
+  let chapterActive = false;
+  let chapterTimeoutId = null;
+
+  let currentDifficulty = "normal";
+  let config = null;
+
+  const difficulties = {
+    bebe: {
+      name: "Modo Bebê",
+      spawnInterval: 1200,
+      obstacleSpeed: 1.6,
+      gemSpeed: 1.4,
+      depthRate: 35,
+      timeScoreRate: 4,
+      playerHitboxScale: 0.7,
+      gemScore: 20,
+      tutucoScore: 40
+    },
+    normal: {
+      name: "Normal",
+      spawnInterval: 800,
+      obstacleSpeed: 2.4,
+      gemSpeed: 2.0,
+      depthRate: 40,
+      timeScoreRate: 5,
+      playerHitboxScale: 0.85,
+      gemScore: 10,
+      tutucoScore: 50
+    },
+    dificil: {
+      name: "Aventureira",
+      spawnInterval: 550,
+      obstacleSpeed: 3.0,
+      gemSpeed: 2.5,
+      depthRate: 45,
+      timeScoreRate: 6,
+      playerHitboxScale: 1.0,
+      gemScore: 8,
+      tutucoScore: 60
+    },
+    pro: {
+      name: "Tutuco Pro",
+      spawnInterval: 350,
+      obstacleSpeed: 4.0,
+      gemSpeed: 3.0,
+      depthRate: 50,
+      timeScoreRate: 7,
+      playerHitboxScale: 1.1,
+      gemScore: 5,
+      tutucoScore: 70
+    }
+  };
+
+  config = difficulties[currentDifficulty];
+
+  const chapters = [
+    {
+      depth: 5,
+      title: "Capítulo 1 – A Entrada do Túnel",
+      text: "A Ártemis encontrou uma entrada secreta na terra...<br>Uma luz cor-de-rosa brilhava lá dentro! 🌟<br>Ela respirou fundo e decidiu descer."
+    },
+    {
+      depth: 40,
+      title: "Capítulo 2 – O Túnel que Brilha",
+      text: "Enquanto descia, a terra brilhava como purpurina ✨<br>Pedrinhas curiosas passavam por ela...<br>Era como um sonho subterrâneo!"
+    },
+    {
+      depth: 80,
+      title: "Capítulo 3 – As Rochas Saltitonas",
+      text: "De repente, algumas pedras começaram a pular 🪨😳<br>Ártemis riu:<br>— ‘Vocês não vão me pegar hoje!’"
+    },
+    {
+      depth: 130,
+      title: "Capítulo 4 – As Joias Luminosas",
+      text: "Lá embaixo, joias flutuavam como estrelinhas 💎🌟<br>Cada uma parecia sussurrar:<br>— ‘Pegue-me se puder…’"
+    },
+    {
+      depth: 180,
+      title: "Capítulo 5 – Cheiro de Terra Molhada",
+      text: "Quanto mais descia, mais cheiro de terra molhada sentia 🌧️<br>Era o cheiro preferido do seu amigo...<br>Tutuco, a topeira!"
+    },
+    {
+      depth: 230,
+      title: "Capítulo 6 – O Encontro com Tutuco",
+      text: "De trás de uma pedra macia apareceu ele... 🦫<br>Com um sorrisão e olhos brilhando:<br>— ‘Você chegou, Ártemis! Eu sabia que vinha!’"
+    },
+    {
+      depth: 280,
+      title: "Capítulo Final – Coração da Terra",
+      text: "Os dois chegaram ao centro da Terra 🌍<br>Havia calor, brilho e paz 🩷<br>— ‘Aqui é onde nascem os sonhos corajosos!’ — disse Tutuco."
+    }
+  ];
+  chapters.forEach(ch => ch.shown = false);
+
+  let audioCtx = null;
+
+  function initAudio() {
+    if (!audioCtx) {
+      const Ctx = window.AudioContext || window.webkitAudioContext;
+      if (Ctx) {
+        audioCtx = new Ctx();
+      }
+    }
+    if (audioCtx && audioCtx.state === "suspended") {
+      audioCtx.resume();
+    }
+  }
+
+  function playBeep(frequency, duration, volume) {
+    if (!audioCtx) return;
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.frequency.value = frequency;
+    osc.type = "sine";
+    gain.gain.value = volume;
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+    osc.start();
+    osc.stop(audioCtx.currentTime + duration);
+  }
+
+  function playGemSound() {
+    initAudio();
+    playBeep(1200, 0.15, 0.22);
+  }
+
+  function playHitSound() {
+    initAudio();
+    playBeep(220, 0.3, 0.3);
+  }
+
+  function startBackgroundMusic() {
+    if (!bgMusic) return;
+    bgMusic.volume = 0.25;
+    bgMusic.currentTime = 0;
+    bgMusic.play().catch(() => {});
+  }
+
+  function stopBackgroundMusic() {
+    if (!bgMusic) return;
+    bgMusic.pause();
+  }
+
+  function selectDifficulty(name) {
+    currentDifficulty = name;
+    config = difficulties[name];
+    diffButtons.forEach(btn => {
+      btn.classList.toggle("active", btn.dataset.diff === name);
+    });
+  }
+
+  diffButtons.forEach(btn => {
+    btn.addEventListener("click", () => {
+      selectDifficulty(btn.dataset.diff);
+    });
+  });
+
+  function resetChapters() {
+    chapters.forEach(ch => ch.shown = false);
+    chapterActive = false;
+    storyPanel.style.display = "none";
+    if (chapterTimeoutId) clearTimeout(chapterTimeoutId);
+  }
+
+  function resetGame() {
+    obstacles.forEach(o => o.el.remove());
+    gems.forEach(g => g.el.remove());
+    obstacles = [];
+    gems = [];
+
+    playerX = gameWidth / 2 - 20;
+    playerY = gameHeight / 2;
+    score = 0;
+    depth = 0;
+    lastSpawnTime = performance.now();
+    lastFrameTime = performance.now();
+    gameRunning = true;
+    tutucoShown = false;
+    tutuco.style.display = "none";
+    spawnInterval = config.spawnInterval;
+
+    resetChapters();
+
+    messageEl.textContent = "Desça, desvie e brilhe! 👧💎";
+    updateHUD();
+    positionPlayer();
+  }
+
+  function updateHUD() {
+    scoreEl.textContent = "⭐ Pontos: " + Math.floor(score);
+    depthEl.textContent = "🌍 Profundidade: " + Math.floor(depth) + " m";
+
+    if (!tutucoShown && score >= config.tutucoScore) {
+      tutucoShown = true;
+      tutuco.style.display = "block";
+      messageEl.textContent = "Você encontrou Tutuco! 🦫 Ele está torcendo por você!";
+    }
+  }
+
+  function positionPlayer() {
+    player.style.left = playerX + "px";
+    player.style.top = playerY + "px";
+  }
+
+  function spawnObject(timestamp) {
+    const isGem = Math.random() < 0.35;
+    const x = Math.random() * (gameWidth - 32);
+    const y = gameHeight;
+
+    const el = document.createElement("div");
+    el.style.left = x + "px";
+    el.style.top = y + "px";
+
+    if (isGem) {
+      el.className = "gem";
+      const gemEmojis = ["💎", "🔷", "✨", "🔸"];
+      el.textContent = gemEmojis[Math.floor(Math.random() * gemEmojis.length)];
+      gameContainer.appendChild(el);
+      gems.push({ el, x, y, speed: config.gemSpeed });
+    } else {
+      el.className = "obstacle";
+      const rockEmojis = ["🪨", "🧱", "⚫", "🪵"];
+      el.textContent = rockEmojis[Math.floor(Math.random() * rockEmojis.length)];
+      gameContainer.appendChild(el);
+      obstacles.push({ el, x, y, speed: config.obstacleSpeed });
+    }
+
+    lastSpawnTime = timestamp;
+  }
+
+  function scaleRect(rect, scale) {
+    if (scale === 1) return rect;
+    const w = rect.width;
+    const h = rect.height;
+    const dw = (w * (1 - scale)) / 2;
+    const dh = (h * (1 - scale)) / 2;
+    return {
+      left: rect.left + dw,
+      right: rect.right - dw,
+      top: rect.top + dh,
+      bottom: rect.bottom - dh
+    };
+  }
+
+  function rectsCollide(r1, r2) {
+    return !(
+      r1.right < r2.left ||
+      r1.left > r2.right ||
+      r1.bottom < r2.top ||
+      r1.top > r2.bottom
+    );
+  }
+
+  function endGame() {
+    gameRunning = false;
+    cancelAnimationFrame(rafId);
+    playHitSound();
+    stopBackgroundMusic();
+    messageEl.textContent = "A pedra te acertou! 😱 Clique em 'Começar' para tentar de novo.";
+    startScreen.style.display = "flex";
+    startBtn.textContent = "Jogar de Novo 🔁";
+  }
+
+  function showChapter(title, text) {
+    chapterActive = true;
+    storyTitleEl.textContent = title;
+    storyTextEl.innerHTML = text;
+    storyPanel.style.display = "block";
+
+    if (chapterTimeoutId) clearTimeout(chapterTimeoutId);
+    chapterTimeoutId = setTimeout(() => {
+      storyPanel.style.display = "none";
+      chapterActive = false;
+    }, 3500);
+  }
+
+  function checkChapters() {
+    for (const ch of chapters) {
+      if (!ch.shown && depth >= ch.depth) {
+        ch.shown = true;
+        showChapter(ch.title, ch.text);
+        break;
+      }
+    }
+  }
+
+  function gameLoop(timestamp) {
+    if (!gameRunning) return;
+
+    if (chapterActive) {
+      rafId = requestAnimationFrame(gameLoop);
+      return;
+    }
+
+    const dt = (timestamp - lastFrameTime) / 1000;
+    lastFrameTime = timestamp;
+
+    let direction = 0;
+    if (keys.left) direction -= 1;
+    if (keys.right) direction += 1;
+    direction += touchDirection;
+
+    playerX += direction * playerSpeed;
+    if (playerX < 0) playerX = 0;
+    if (playerX > gameWidth - 40) playerX = gameWidth - 40;
+    positionPlayer();
+
+    depth += config.depthRate * dt;
+    score += config.timeScoreRate * dt;
+
+    if (timestamp - lastSpawnTime > spawnInterval) {
+      spawnObject(timestamp);
+    }
+
+    const playerRectBase = player.getBoundingClientRect();
+    const playerRect = scaleRect(playerRectBase, config.playerHitboxScale);
+
+    obstacles = obstacles.filter(obj => {
+      obj.y -= obj.speed;
+      obj.el.style.top = obj.y + "px";
+
+      const rect = obj.el.getBoundingClientRect();
+      if (rect.bottom < 0) {
+        obj.el.remove();
+        return false;
+      }
+
+      if (rectsCollide(playerRect, rect)) {
+        endGame();
+        return false;
+      }
+
+      return true;
+    });
+
+    gems = gems.filter(obj => {
+      obj.y -= obj.speed;
+      obj.el.style.top = obj.y + "px";
+
+      const rect = obj.el.getBoundingClientRect();
+      if (rect.bottom < 0) {
+        obj.el.remove();
+        return false;
+      }
+
+      if (rectsCollide(playerRect, rect)) {
+        score += config.gemScore;
+        obj.el.remove();
+        messageEl.textContent = "Pegou uma pedra preciosa! 💎✨";
+        playGemSound();
+        return false;
+      }
+
+      return true;
+    });
+
+    checkChapters();
+    updateHUD();
+    rafId = requestAnimationFrame(gameLoop);
+  }
+
+  window.addEventListener("keydown", (e) => {
+    if (e.key === "ArrowLeft") {
+      keys.left = true;
+    } else if (e.key === "ArrowRight") {
+      keys.right = true;
+    }
+  });
+
+  window.addEventListener("keyup", (e) => {
+    if (e.key === "ArrowLeft") {
+      keys.left = false;
+    } else if (e.key === "ArrowRight") {
+      keys.right = false;
+    }
+  });
+
+  function startMove(direction) {
+    touchDirection = direction;
+  }
+  function stopMove() {
+    touchDirection = 0;
+  }
+
+  ["touchstart", "mousedown"].forEach(evt => {
+    btnLeft.addEventListener(evt, (e) => {
+      e.preventDefault();
+      startMove(-1);
+    });
+    btnRight.addEventListener(evt, (e) => {
+      e.preventDefault();
+      startMove(1);
+    });
+  });
+
+  ["touchend", "touchcancel", "mouseup", "mouseleave"].forEach(evt => {
+    btnLeft.addEventListener(evt, stopMove);
+    btnRight.addEventListener(evt, stopMove);
+  });
+
+  startBtn.addEventListener("click", () => {
+    initAudio();
+    startBackgroundMusic();
+    startScreen.style.display = "none";
+    resetGame();
+    rafId = requestAnimationFrame(gameLoop);
+  });
+
+  positionPlayer();
+</script>
+
+</body>
+</html>
